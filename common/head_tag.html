@@ -1,20 +1,20 @@
 <script type="text/discourse-plugin" version="1.6.0">
 
-api.decorateWidget('topic-list-columns', (helper) => {
-    const ignoredUsers = api.getCurrentUser()?.ignored_users || [];
+api.modifyClass('component:topic-list', {
+    pluginId: 'remove-ignored-users-topic',
 
-    // 在主题列表渲染后操作
-    helper.parentView.on('didInsertElement', function() {
-        const ignoredUserSet = new Set(ignoredUsers);
-        
-        // 查找并隐藏所有被忽略用户的主题项
+    didInsertElement() {
+        this._super(...arguments); 
+
+        const ignoredUsers = api.getCurrentUser()?.ignored_users || [];
+
         this.$('.topic-list-item').each((index, element) => {
             const creatorName = $(element).data('creator-name');
-            if (ignoredUserSet.has(creatorName)) {
-                $(element).hide(); // 隐藏DOM元素
+            if (ignoredUsers.includes(creatorName)) {
+                $(element).hide(); 
             }
         });
-    });
+    }
 });
 
 </script>
