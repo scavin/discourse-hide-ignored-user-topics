@@ -1,20 +1,22 @@
 <script type="text/discourse-plugin" version="1.6.0">
 
-const { alias } = require("@ember/object/computed");
+api.modifyClass('component:topic-list', {
+    pluginId: 'remove-ignored-users-topic',
 
-api.decorateWidget('topic-list', (helper) => {
-    const ignoredUsers = api.getCurrentUser()?.ignored_users || [];
-    const ignoredUserSet = new Set(ignoredUsers);
+    // 使用适当的钩子和方法来处理 DOM
+    didInsertElement() {
+        this._super(...arguments); // 调用父类的 didInsertElement 方法
 
-    // 在主题列表渲染后操作
-    helper.parentView.on('render', function() {
+        const ignoredUsers = api.getCurrentUser()?.ignored_users || [];
+
+        // 检查 DOM 中的每个主题项
         this.$('.topic-list-item').each((index, element) => {
             const creatorName = $(element).data('creator-name');
-            if (ignoredUserSet.has(creatorName)) {
-                $(element).hide(); // 隐藏DOM元素
+            if (ignoredUsers.includes(creatorName)) {
+                $(element).hide(); // 隐藏被忽略用户的主题
             }
         });
-    });
+    }
 });
 
 </script>
