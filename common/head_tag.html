@@ -1,31 +1,33 @@
-<script type="text/discourse-plugin" version="1.6.0">
+import { withPluginApi } from "discourse/lib/plugin-api";
 
-// 创建样式元素以隐藏被忽略用户的主题项
-const styleElement = document.createElement("style");
+const HIDDEN_USERS_CLASS = "hidden-user";
 
-// 获取当前用户的被忽略用户列表
-const ignoredUsers = api.getCurrentUser()?.ignored_users || [];
+export default {
+  name: "remove-ignored-users-topic",
 
-// 确保 ignoredUsers 是一个数组
-if (Array.isArray(ignoredUsers)) {
-    // 为每个被忽略用户生成 CSS 规则，隐藏其创建的主题
-    ignoredUsers.forEach(user => {
-        styleElement.innerHTML += `tr.topic-list-item[data-creator-name="${user}"] { display: none; }`;
+  initialize(container) {
+    withPluginApi("1.39.0", (api) => {
+      // 注册值转换器以修改主题列表列
+      api.registerValueTransformer("topic-list-columns", ({ value: columns }) => {
+        columns.add("remove-ignored-users", {
+          item: (topic) => {
+            const currentUser = api.getCurrentUser();
+            // 检查当前用户是否存在以及其忽略用户列表
+            if (currentUser && currentUser.ignored_users.includes(topic.creator.username)) {
+              topic.classList.add(HIDDEN_USERS_CLASS); // 添加隐藏类
+            }
+            return topic;
+          },
+          after: "activity",
+        });
+
+        return columns; // 返回修改后的列
+      });
+
+      // 添加 CSS 样式以隐藏被忽略用户的主题列表项
+      const style = document.createElement("style");
+      style.innerHTML = `tr.topic-list-item.${HIDDEN_USERS_CLASS} { display: none; }`;
+      document.body.appendChild(style); // 将样式添加到文档中
     });
-}
-
-// 将样式元素添加到文档中
-document.head.appendChild(styleElement);
-
-// 注册值转换器以过滤主题列表
-api.registerValueTransformer('topic-list-columns', (columns) => {
-    // 确保 columns 是一个数组
-    if (!Array.isArray(columns)) {
-        return columns; // 如果不是数组，直接返回
-    }
-    
-    // 过滤掉被忽略用户的主题
-    return columns.filter(topic => !ignoredUsers.includes(topic.creator.username));
-});
-
-</script>
+  },
+};
