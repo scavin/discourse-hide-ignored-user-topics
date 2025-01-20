@@ -1,20 +1,21 @@
 <script type="text/discourse-plugin" version="1.6.0">
 
-api.decorateWidget('topic-list', (helper) => {
-    const ignoredUsers = api.getCurrentUser()?.ignored_users || [];
+api.decorateComponent('topic-list', {
+    tagName: 'div',
 
-    // 在主题列表的每一项渲染后执行
-    helper.parentView.on('didInsertElement', function() {
-        const ignoredUserSet = new Set(ignoredUsers);
-        
-        // 隐藏忽略用户的主题项
+    didInsertElement() {
+        this._super(...arguments); // 调用父类的 didInsertElement 方法
+
+        const ignoredUsers = api.getCurrentUser()?.ignored_users || [];
+
+        // 确保 DOM 已插入，操作主题列表项目
         this.$('.topic-list-item').each((index, element) => {
             const creatorName = $(element).data('creator-name');
-            if (ignoredUserSet.has(creatorName)) {
-                $(element).hide(); // 隐藏DOM元素
+            if (ignoredUsers.includes(creatorName)) {
+                $(element).hide(); // 隐藏被忽略用户的主题
             }
         });
-    });
+    }
 });
 
 </script>
