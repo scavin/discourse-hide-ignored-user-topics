@@ -1,53 +1,31 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
-
 const HIDDEN_USERS_CLASS = "hidden-user";
-
 export default {
   name: "hide ignored user's topics fix",
 
   initialize(container) {
     withPluginApi("1.39.0", (api) => {
-      // 添加 CSS 样式以隐藏被忽略用户的话题列表项
-      const style = document.createElement("style");
-      style.innerHTML = `tr.topic-list-item.hidden-user { display: none; }`;
-      document.body.appendChild(style);
-
-      // 隐藏被忽略用户的话题
-      function hideIgnoredUsersTopics() {
-        const currentUser = api.getCurrentUser();
-        if (currentUser) {
-          const ignoredUsers = currentUser.ignored_users || []; // 确保有默认值
-          const topicListItems = document.querySelectorAll("tr.topic-list-item");
-
-          console.log("Ignored Users:", ignoredUsers); // 输出被忽略的用户列表
-
-          topicListItems.forEach((item) => {
-            const creatorName = item.getAttribute("data-creator-name");
-            if (ignoredUsers.includes(creatorName)) {
-              item.classList.add(HIDDEN_USERS_CLASS); // 添加隐藏类
-              console.log(`Hiding topic from ignored user: ${creatorName}`);
+      // 注册值转换器以修改主题列表列
+      api.registerValueTransformer("topic-list-columns", ({ value: columns }) => {
+        columns.add("remove-ignored-users", {
+          item: (topic) => {
+            const currentUser = api.getCurrentUser();
+            // 检查当前用户是否存在以及其忽略用户列表
+            if (currentUser && currentUser.ignored_users.includes(topic.creator.username)) {
+              topic.classList.add(HIDDEN_USERS_CLASS); // 添加隐藏类
             }
-          });
-        } else {
-          console.log("No current user found."); // 如果没有当前用户
-        }
-      }
+            return topic;
+          },
+          after: "activity",
+        });
 
-      // 暴露函数到全局作用域以便调试
-      setTimeout(() => {
-        window.hideIgnoredUsersTopics = hideIgnoredUsersTopics;
-        console.log("hideIgnoredUsersTopics function is now available globally.");
-      }, 1000); // 延迟1秒
-
-      // 初始调用以隐藏已加载的话题
-      hideIgnoredUsersTopics();
-
-      // 监听主题列表更新事件
-      api.onPageChange((url) => {
-        if (url.includes("/latest")) {
-          hideIgnoredUsersTopics();
-        }
+        return columns; // 返回修改后的列
       });
+
+      // 添加 CSS 样式以隐藏被忽略用户的主题列表项
+      const style = document.createElement("style");
+      style.innerHTML = `tr.topic-list-item.${HIDDEN_USERS_CLASS} { display: none; }`;
+      document.body.appendChild(style); // 将样式添加到文档中
     });
   },
 };
