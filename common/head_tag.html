@@ -1,16 +1,28 @@
 <script type="text/discourse-plugin" version="1.6.0">
+
 const { alias } = require("@ember/object/computed");
+
 api.modifyClass("component:topic-list-item", {
-  pluginId: "remove-ignored-users-topic",
-  attributeBindings: ["data-topic-id", "role", "ariaLevel:aria-level", "data-creator-name"],
-  "data-creator-name": alias("topic.creator.username"),
+    pluginId: "remove-ignored-users-topic",
+    attributeBindings: ["data-topic-id", "role", "ariaLevel:aria-level", "data-creator-name"],
+    "data-creator-name": alias("topic.creator.username"),
 });
 
-// Use a different method to add styles
+// 根据当前用户的忽略用户列表生成样式
 if (api.getCurrentUser()) {
-  const ignoredUsers = api.getCurrentUser().ignored_users;
-  const styles = ignoredUsers.map(u => `tr[data-creator-name="${u}"] { display: none; }`).join("\n");
-  // Assuming api.addStyle is the correct method
-  api.addStyle(styles);
+    const ignoredUsers = api.getCurrentUser().ignored_users;
+
+    // 创建样式字符串
+    let styles = '';
+    for (const u of ignoredUsers) {
+        styles += `tr[data-creator-name="${u}"] { display: none; }\n`;
+    }
+
+    // 添加样式到页面头部
+    const styleElement = document.createElement('style');
+    styleElement.type = 'text/css';
+    styleElement.appendChild(document.createTextNode(styles));
+    document.head.appendChild(styleElement);
 }
+
 </script>
