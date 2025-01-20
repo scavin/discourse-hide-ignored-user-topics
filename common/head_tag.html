@@ -4,7 +4,7 @@
 const styleElement = document.createElement("style");
 
 // 获取当前用户的被忽略用户列表
-const ignoredUsers = api.getCurrentUser()?.ignored_users;
+const ignoredUsers = api.getCurrentUser()?.ignored_users || [];
 
 // 确保 ignoredUsers 是一个数组
 if (Array.isArray(ignoredUsers)) {
@@ -19,10 +19,13 @@ document.head.appendChild(styleElement);
 
 // 注册值转换器以过滤主题列表
 api.registerValueTransformer('topic-list-columns', (columns) => {
+    // 确保 columns 是一个数组
     if (!Array.isArray(columns)) {
-        return columns; // 如果 columns 不是数组，直接返回
+        return columns; // 如果不是数组，直接返回
     }
-    return columns.filter(topic => !ignoredUsers || !ignoredUsers.includes(topic.creator.username));
+    
+    // 过滤掉被忽略用户的主题
+    return columns.filter(topic => !ignoredUsers.includes(topic.creator.username));
 });
 
 </script>
