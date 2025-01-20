@@ -23,6 +23,14 @@ if (api.getCurrentUser()) {
     styleElement.type = 'text/css';
     styleElement.appendChild(document.createTextNode(styles));
     document.head.appendChild(styleElement);
+
+    // 应用 inert 属性来隐藏元素，避免 focus 问题
+    for (const u of ignoredUsers) {
+        const elements = document.querySelectorAll(`tr[data-creator-name="${u}"]`);
+        elements.forEach(element => {
+            element.setAttribute("inert", ""); // 使用 inert 属性隐藏元素
+        });
+    }
 }
 
 </script>
