@@ -1,5 +1,7 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
+
 const HIDDEN_USERS_CLASS = "hidden-user";
+
 export default {
   name: "hide ignored user's topics fix",
 
@@ -22,10 +24,10 @@ export default {
         return columns; // 返回修改后的列
       });
 
-      // 添加 CSS 样式以隐藏被忽略用户的主题列表项
+      // 添加 CSS 样式以隐藏被忽略用户的话题列表项
       const style = document.createElement("style");
       style.innerHTML = `tr.topic-list-item.${HIDDEN_USERS_CLASS} { display: none; }`;
-      document.body.appendChild(style); // 将样式添加到文档中
+      document.body.appendChild(style);
     });
   },
 };
