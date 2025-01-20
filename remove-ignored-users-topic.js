@@ -4,7 +4,7 @@ import { withPluginApi } from "discourse/lib/plugin-api";
 const HIDDEN_USERS_CLASS = "hidden-user";
 
 export default {
-  name: "remove-ignored-users-topic",
+  name: "hide ignored user's topics fix",
 
   initialize(container) {
     withPluginApi("1.39.0", (api) => {
