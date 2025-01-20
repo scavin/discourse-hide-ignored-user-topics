@@ -4,19 +4,25 @@
 const styleElement = document.createElement("style");
 
 // 获取当前用户的被忽略用户列表
-const ignoredUsers = api.getCurrentUser()?.ignored_users || [];
+const ignoredUsers = api.getCurrentUser()?.ignored_users;
 
-// 为每个被忽略用户生成 CSS 规则，隐藏其创建的主题
-ignoredUsers.forEach(user => {
-    styleElement.innerHTML += `tr.topic-list-item[data-creator-name="${user}"] { display: none; }`;
-});
+// 确保 ignoredUsers 是一个数组
+if (Array.isArray(ignoredUsers)) {
+    // 为每个被忽略用户生成 CSS 规则，隐藏其创建的主题
+    ignoredUsers.forEach(user => {
+        styleElement.innerHTML += `tr.topic-list-item[data-creator-name="${user}"] { display: none; }`;
+    });
+}
 
 // 将样式元素添加到文档中
 document.head.appendChild(styleElement);
 
 // 注册值转换器以过滤主题列表
 api.registerValueTransformer('topic-list-columns', (columns) => {
-    return columns.filter(topic => !ignoredUsers.includes(topic.creator.username));
+    if (!Array.isArray(columns)) {
+        return columns; // 如果 columns 不是数组，直接返回
+    }
+    return columns.filter(topic => !ignoredUsers || !ignoredUsers.includes(topic.creator.username));
 });
 
 </script>
