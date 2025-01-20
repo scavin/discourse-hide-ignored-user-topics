@@ -1,18 +1,16 @@
 <script type="text/discourse-plugin" version="1.6.0">
-
 const { alias } = require("@ember/object/computed");
-
 api.modifyClass("component:topic-list-item", {
-    pluginId: "remove-ignored-users-topic",
-    attributeBindings: ["data-topic-id", "role", "ariaLevel:aria-level", "data-creator-name"],
-    "data-creator-name": alias("topic.creator.username"),
+  pluginId: "remove-ignored-users-topic",
+  attributeBindings: ["data-topic-id", "role", "ariaLevel:aria-level", "data-creator-name"],
+  "data-creator-name": alias("topic.creator.username"),
 });
 
+// Use a different method to add styles
 if (api.getCurrentUser()) {
-    const ignoredUsers = api.getCurrentUser().ignored_users;
-
-    const styles = ignoredUsers.map(u => `tr[data-creator-name="${u}"] { display: none; }`).join("\n");
-    api.addStyle(styles);
+  const ignoredUsers = api.getCurrentUser().ignored_users;
+  const styles = ignoredUsers.map(u => `tr[data-creator-name="${u}"] { display: none; }`).join("\n");
+  // Assuming api.addStyle is the correct method
+  api.addStyle(styles);
 }
-
 </script>
