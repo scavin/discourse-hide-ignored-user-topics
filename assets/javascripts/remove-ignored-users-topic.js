@@ -23,10 +23,14 @@ export default {
             const creatorName = item.getAttribute("data-creator-name");
             if (ignoredUsers.includes(creatorName)) {
               item.classList.add(HIDDEN_USERS_CLASS); // 添加隐藏类
+              console.log(`Hiding topic from ignored user: ${creatorName}`);
             }
           });
         }
       }
+
+      // 将函数暴露到全局作用域以便调试
+      window.hideIgnoredUsersTopics = hideIgnoredUsersTopics;
 
       // 初始调用以隐藏已加载的话题
       hideIgnoredUsersTopics();
