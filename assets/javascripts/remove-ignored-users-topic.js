@@ -12,13 +12,6 @@ export default {
       style.innerHTML = `tr.topic-list-item.hidden-user { display: none; }`;
       document.body.appendChild(style);
 
-      // 监听主题列表更新事件
-      api.onPageChange((url) => {
-        if (url.includes("/latest")) {
-          hideIgnoredUsersTopics();
-        }
-      });
-
       // 隐藏被忽略用户的话题
       function hideIgnoredUsersTopics() {
         const currentUser = api.getCurrentUser();
@@ -37,6 +30,13 @@ export default {
 
       // 初始调用以隐藏已加载的话题
       hideIgnoredUsersTopics();
+
+      // 监听主题列表更新事件
+      api.onPageChange((url) => {
+        if (url.includes("/latest")) {
+          hideIgnoredUsersTopics();
+        }
+      });
     });
   },
 };
