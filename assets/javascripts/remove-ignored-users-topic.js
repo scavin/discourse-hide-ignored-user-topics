@@ -33,8 +33,11 @@ export default {
         }
       }
 
-      // 将函数暴露到全局作用域以便调试
-      window.hideIgnoredUsersTopics = hideIgnoredUsersTopics;
+      // 暴露函数到全局作用域以便调试
+      setTimeout(() => {
+        window.hideIgnoredUsersTopics = hideIgnoredUsersTopics;
+        console.log("hideIgnoredUsersTopics function is now available globally.");
+      }, 1000); // 延迟1秒
 
       // 初始调用以隐藏已加载的话题
       hideIgnoredUsersTopics();
