@@ -1,4 +1,3 @@
-
 <script type="text/discourse-plugin" version="1.6.0">
 
 const { alias } = require("@ember/object/computed");
@@ -9,14 +8,12 @@ api.modifyClass("component:topic-list-item", {
     "data-creator-name": alias("topic.creator.username"),
 });
 
+// 使用新的主题列表 API 来隐藏忽略的用户主题
 if (api.getCurrentUser()) {
-const s = document.createElement("style");
+    const ignoredUsers = api.getCurrentUser().ignored_users;
 
-for (const u of api.getCurrentUser()?.ignored_users) {
-    s.innerHTML += `tr.topic-list-item[data-creator-name="${u}"] { display: none; }`;
-}
-
-document.body.appendChild(s);
+    // 通过 API 修改主题列表的类，而不是直接修改样式
+    api.addStyle(ignoredUsers.map(u => `tr[data-creator-name="${u}"] { display: none; }`).join("\n"));
 }
 
 </script>
