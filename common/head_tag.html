@@ -8,12 +8,11 @@ api.modifyClass("component:topic-list-item", {
     "data-creator-name": alias("topic.creator.username"),
 });
 
-// 使用新的主题列表 API 来隐藏忽略的用户主题
 if (api.getCurrentUser()) {
     const ignoredUsers = api.getCurrentUser().ignored_users;
 
-    // 通过 API 修改主题列表的类，而不是直接修改样式
-    api.addStyle(ignoredUsers.map(u => `tr[data-creator-name="${u}"] { display: none; }`).join("\n"));
+    const styles = ignoredUsers.map(u => `tr[data-creator-name="${u}"] { display: none; }`).join("\n");
+    api.addStyle(styles);
 }
 
 </script>
