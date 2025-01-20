@@ -1,11 +1,11 @@
 {
-  "name": "hide ignored user's topics",
+  "name": "hide ignored user's topics fix",
   "component": true,
   "license_url": null,
-  "about_url": null,
-  "authors": "Lhc_fl",
+  "about_url": "https://github.com/scavin/discourse-hide-ignored-user-topics/",
+  "authors": "scavin",
   "theme_version": null,
-  "minimum_discourse_version": null,
+  "minimum_discourse_version": v3.4.0.beta4,
   "maximum_discourse_version": null,
   "assets": {
   },
