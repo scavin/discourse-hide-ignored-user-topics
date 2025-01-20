@@ -1,15 +1,5 @@
 <script type="text/discourse-plugin" version="1.6.0">
 
-const { alias } = require("@ember/object/computed");
-
-api.modifyClass("component:topic-list-item", {
-    pluginId: "remove-ignored-users-topic",
-    
-    // 添加数据属性
-    attributeBindings: ["data-topic-id", "role", "ariaLevel:aria-level", "data-creator-name"],
-    "data-creator-name": alias("topic.creator.username"),
-});
-
 // 创建样式元素以隐藏被忽略用户的主题项
 const styleElement = document.createElement("style");
 
@@ -24,7 +14,7 @@ ignoredUsers.forEach(user => {
 // 将样式元素添加到文档中
 document.head.appendChild(styleElement);
 
-// 使用值转换器来过滤主题列表
+// 注册值转换器以过滤主题列表
 api.registerValueTransformer('topic-list-columns', (columns) => {
     return columns.filter(topic => !ignoredUsers.includes(topic.creator.username));
 });
