@@ -16,8 +16,10 @@ export default {
       function hideIgnoredUsersTopics() {
         const currentUser = api.getCurrentUser();
         if (currentUser) {
-          const ignoredUsers = currentUser.ignored_users;
+          const ignoredUsers = currentUser.ignored_users || []; // 确保有默认值
           const topicListItems = document.querySelectorAll("tr.topic-list-item");
+
+          console.log("Ignored Users:", ignoredUsers); // 输出被忽略的用户列表
 
           topicListItems.forEach((item) => {
             const creatorName = item.getAttribute("data-creator-name");
@@ -26,6 +28,8 @@ export default {
               console.log(`Hiding topic from ignored user: ${creatorName}`);
             }
           });
+        } else {
+          console.log("No current user found."); // 如果没有当前用户
         }
       }
 
