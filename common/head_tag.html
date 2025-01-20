@@ -1,18 +1,17 @@
 <script type="text/discourse-plugin" version="1.6.0">
 
-api.decorateWidget('topic-list', (helper) => {
+api.decorateWidget('topic-list-item', (helper) => {
     const ignoredUsers = api.getCurrentUser()?.ignored_users || [];
     const ignoredUserSet = new Set(ignoredUsers);
 
-    // 循环遍历每个主题项，隐藏被忽略的用户的主题
-    helper.parentView.on('didInsertElement', function() {
-        this.$('.topic-list-item').each((index, element) => {
-            const creatorName = $(element).data('creator-name');
-            if (ignoredUserSet.has(creatorName)) {
-                $(element).hide(); // 隐藏DOM元素
-            }
-        });
-    });
+    // 检查创建者是否在被忽略的用户列表中
+    const creatorName = helper.attrs['data-creator-name'];
+    if (ignoredUserSet.has(creatorName)) {
+        // 隐藏主题项
+        return {
+            html: '<div style="display: none;"></div>', // 返回一个隐藏的 div
+        };
+    }
 });
 
 </script>
